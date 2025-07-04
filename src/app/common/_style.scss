@@ -31,7 +31,7 @@ $delete-task-hover-color: #f44336;
   transition: outline 0.2s ease;
 
   &:focus {
-    outline: $dark-color 2px solid;
+    outline: $button-color 2px solid;
     border: none;
     box-shadow: none;
   }

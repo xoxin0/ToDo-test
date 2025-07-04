@@ -8,7 +8,9 @@
         id="search-input"
         type="text"
         class="search-input"
-        placeholder="Search tasks..."
+        placeholder="Поиск..."
+        [(ngModel)]="searchTerm"
+        (input)="updateSearch(searchTerm)"
       />
     </div>
 
@@ -16,16 +18,34 @@
   </div>
 
   <div class="tasks-list">
-    @for (task of allTasks$ | async; track task) {
+
+    @for (task of filteredTasks$ | async; track task) {
       <div class="task">
         <div class="title-task-container">
           <div class="task-title">{{ task.title }}</div>
-          <button class="btn-delete" (click)="deleteTask(task.id!)">×</button>
+          <button
+            class="btn-delete"
+            (click)="deleteTask(task.id!)"
+          >
+            ×
+          </button>
         </div>
+
         <p class="description-p">{{ task.description }}</p>
+
         <div class="task-footer-buttons">
-          <a routerLink="{{ task.id }}" class="link-current-task">Подробнее</a>
-          <select class="status-select" [ngModel]="getCurrentStatus(task)" (ngModelChange)="onStatusChange(task.id!, $event)">
+          <a
+            routerLink="{{ task.id }}"
+            class="link-current-task"
+          >
+            Подробнее
+          </a>
+
+          <select
+            class="status-select"
+            [ngModel]="getCurrentStatus(task)"
+            (ngModelChange)="onStatusChange(task.id!, $event)"
+          >
             <option *ngFor="let status of statuses" [value]="status">
               {{ status }}
             </option>
@@ -33,6 +53,7 @@
         </div>
       </div>
     }
+
   </div>
 </div>
 

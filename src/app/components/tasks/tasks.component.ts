@@ -15,17 +15,27 @@ import {
 } from '@angular/forms';
 
 import {
+  BehaviorSubject,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  map,
   Observable,
+  startWith,
   Subject,
-  takeUntil,
-  tap
+  takeUntil
 } from 'rxjs';
+
+import {
+  AsyncPipe,
+  NgForOf,
+  NgIf
+} from '@angular/common';
 
 import { TaskApiService } from '../../services/task-api.service';
 import { ITask } from '../../interfaces/ITask';
-import {AsyncPipe, NgForOf, NgIf} from '@angular/common';
-import {Statuses} from '../../common/statuses.enum';
-import {RouterLink} from '@angular/router';
+import { Statuses } from '../../common/statuses.enum';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
@@ -49,16 +59,42 @@ export class TasksComponent implements OnInit, OnDestroy {
     status: new FormControl<string>('Не выполнена', { nonNullable: true }),
     description: new FormControl<string>('', { nonNullable: true }),
   })
-  public allTasks$: Observable<ITask[]> = new Observable();
   public openTaskForm: boolean = false;
   public statuses: Statuses[] = [...Object.values(Statuses)];
+  public searchTerm: string = '';
+  public filteredTasks$!: Observable<ITask[]>;
 
   private readonly _taskApiService: TaskApiService = inject(TaskApiService);
+  private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _destroy$: Subject<void> = new Subject<void>();
-  private _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private _searchSubject: Subject<string> = new Subject<string>();
+  private _tasksSubject: BehaviorSubject<ITask[]> = new BehaviorSubject<ITask[]>([]);
 
   public ngOnInit(): void {
     this.loadTasks();
+
+    // combineLatest - объединяет несколько Observable (не выдаст значение, пока все не выдадут хотя бы одно значение)
+    this.filteredTasks$ = combineLatest([
+      this._tasksSubject.asObservable(),
+      this._searchSubject.pipe(
+        startWith(''),
+        debounceTime(300),
+        distinctUntilChanged(),
+        map(term => term.toLowerCase().trim())
+      )
+    ]).pipe(
+      map(([tasks, searchTerm]) =>
+        tasks.filter(task =>
+          task.title.toLowerCase().includes(searchTerm) ||
+          task.description?.toLowerCase().includes(searchTerm) ||
+          task.status.toLowerCase().includes(searchTerm)
+        )
+      )
+    );
+  }
+
+  updateSearch(term: string): void {
+    this._searchSubject.next(term);
   }
 
   public ngOnDestroy(): void {
@@ -84,13 +120,12 @@ export class TasksComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$)
       )
       .subscribe({
-        next: (): void => {
-          this._cdr.markForCheck();
-          console.log('все гуд')
-        },
-        error: (): void => {
+        next: () => {
           this.loadTasks();
-          console.log('все НЕ гуд')
+          this._cdr.markForCheck();
+        },
+        error: () => {
+          console.error('Ошибка при обновлении статуса');
         }
       });
   }
@@ -98,15 +133,12 @@ export class TasksComponent implements OnInit, OnDestroy {
   public addTask(task: ITask) {
     this._taskApiService.addTask(task)
       .pipe(
-        tap(() => {
-          this.loadTasks();
-          this._cdr.markForCheck();
-        }),
         takeUntil(this._destroy$)
       )
       .subscribe(() => {
+        this.loadTasks();
         this.taskForm.reset();
-      })
+      });
 
     this.closeModalTaskForm();
   }
@@ -114,16 +146,20 @@ export class TasksComponent implements OnInit, OnDestroy {
   public deleteTask(id: number): void {
     this._taskApiService.deleteTask(id)
       .pipe(
-        tap(() => {
-          this.loadTasks();
-          this._cdr.markForCheck();
-        }),
         takeUntil(this._destroy$)
       )
-      .subscribe()
+      .subscribe(() => {
+        this.loadTasks();
+      });
   }
 
   private loadTasks(): void {
-    this.allTasks$ = this._taskApiService.getTasks();
+    this._taskApiService.getTasks()
+      .pipe(
+        takeUntil(this._destroy$)
+      )
+      .subscribe(tasks => {
+        this._tasksSubject.next(tasks);
+      });
   }
 }

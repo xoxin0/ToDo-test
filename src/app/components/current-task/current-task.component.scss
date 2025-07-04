@@ -1,0 +1,51 @@
+@use "../../common/style" as *;
+
+.container {
+  background-color: $background-color;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $light-color;
+
+  .info-task-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: start;
+    background-color: $dark-color;
+    width: 500px;
+    max-width: 50%;
+    padding: 40px 80px;
+    border-radius: 14px;
+
+    .task-header {
+      margin-bottom: 20px;
+
+      .title {
+        margin-bottom: 20px;
+      }
+
+      .status {
+        display: inline;
+        border: 1px solid $light-color;
+        border-radius: 5px;
+        padding: 5px 10px;
+      }
+    }
+
+    .description-p {
+      word-break: break-word;
+    }
+
+    .detail-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .back-btn {
+      @include ui-button;
+      align-self: end;
+    }
+  }
+}

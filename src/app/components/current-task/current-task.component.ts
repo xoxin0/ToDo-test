@@ -1,5 +1,5 @@
 import {Component, inject, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {TaskApiService} from '../../services/task-api.service';
 import {map, Subject, takeUntil} from 'rxjs';
 import {ITask} from '../../interfaces/ITask';
@@ -13,6 +13,7 @@ import {ITask} from '../../interfaces/ITask';
 
 export class CurrentTaskComponent implements OnInit, OnDestroy {
   private readonly _route: ActivatedRoute = inject(ActivatedRoute);
+  private readonly _routerNavigateService: Router = inject(Router);
   private readonly _taskApiService: TaskApiService = inject(TaskApiService);
   private _destroy$: Subject<void> = new Subject<void>();
   public taskId: number = this._route.snapshot.params['id'];
@@ -33,5 +34,9 @@ export class CurrentTaskComponent implements OnInit, OnDestroy {
   public ngOnDestroy(): void {
     this._destroy$.next();
     this._destroy$.complete();
+  }
+
+  public backToTasks(): void {
+    this._routerNavigateService.navigate(['/tasks']);
   }
 }
