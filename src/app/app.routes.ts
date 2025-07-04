@@ -15,5 +15,6 @@ export const routes: Routes = [
       import('./components/current-task/current-task.component').then(
         (m) => m.CurrentTaskComponent
       ),
-  }
+  },
+  { path: '**', redirectTo: 'tasks', pathMatch: 'full' }
 ];

@@ -49,7 +49,7 @@ import { RouterLink } from '@angular/router';
     NgIf
   ],
   templateUrl: './tasks.component.html',
-  styleUrl: './tasks.component.scss',
+  styleUrls: ['./tasks.component.scss', 'tasks-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
@@ -93,7 +93,7 @@ export class TasksComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateSearch(term: string): void {
+  public updateSearch(term: string): void {
     this._searchSubject.next(term);
   }
 

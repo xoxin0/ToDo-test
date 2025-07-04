@@ -27,10 +27,6 @@ export class TaskApiService {
     return this.http.post<ITask>(this.API_URL, task);
   }
 
-  public updateTask(task: ITask): Observable<ITask> {
-    return this.http.put<ITask>(`${this.API_URL}/${task.id}`, task);
-  }
-
   public updateStatus(id: number, status: string): Observable<ITask> {
     return this.http.patch<ITask>(`${this.API_URL}/${id}`, { status });
   }

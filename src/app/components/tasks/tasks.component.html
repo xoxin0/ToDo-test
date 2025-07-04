@@ -75,12 +75,32 @@
 
       <div class="form-group">
         <label for="description" class="label">Description:</label>
-        <textarea id="description" type="text" formControlName="description" class="form-control description-textarea" rows="2"></textarea>
+        <textarea
+          id="description"
+          type="text"
+          formControlName="description"
+          class="form-control description-textarea"
+          rows="2"
+        ></textarea>
       </div>
 
       <div class="form-actions">
-        <button type="button" class="btn btn-delete" (click)="closeModalTaskForm()">Cancel</button>
-        <button type="submit" class="btn btn-add" (click)="addTask(taskForm.getRawValue())" [disabled]="taskForm.invalid">Add Task</button>
+        <button
+          type="button"
+          class="btn btn-delete"
+          (click)="closeModalTaskForm()"
+        >
+          Cancel
+        </button>
+
+        <button
+          type="submit"
+          class="btn btn-add"
+          (click)="addTask(taskForm.getRawValue())"
+          [disabled]="taskForm.invalid"
+        >
+          Add Task
+        </button>
       </div>
     </form>
   </div>
