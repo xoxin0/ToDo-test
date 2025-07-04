@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="task-header">
+    <h1 class="title">Your Tasks:</h1>
+
+    <div class="search">
+      <label for="search-input">Search:</label>
+      <input
+        id="search-input"
+        type="text"
+        class="search-input"
+        placeholder="Search tasks..."
+      />
+    </div>
+
+    <button class="add-task-btn" (click)="openModalTaskForm()">Add Task</button>
+  </div>
+
+  <div class="tasks-list">
+    @for (task of allTasks$ | async; track task) {
+      <div class="task">
+        <div class="title-task-container">
+          <div class="task-title">{{ task.title }}</div>
+          <button class="btn-delete" (click)="deleteTask(task.id!)">×</button>
+        </div>
+        <p class="description-p">{{ task.description }}</p>
+        <div class="task-footer-buttons">
+          <a routerLink="{{ task.id }}" class="link-current-task">Подробнее</a>
+          <select class="status-select" [ngModel]="getCurrentStatus(task)" (ngModelChange)="onStatusChange(task.id!, $event)">
+            <option *ngFor="let status of statuses" [value]="status">
+              {{ status }}
+            </option>
+          </select>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+@if (openTaskForm) {
+  <div class="container-form">
+    <form [formGroup]="taskForm" class="task-form">
+      <div class="form-group">
+        <label for="title" class="label">Title:</label>
+        <input id="title" type="text" formControlName="title" class="form-control" />
+
+        <div
+          *ngIf="taskForm.get('title')?.invalid &&
+                 taskForm.get('title')?.touched"
+          class="error-message"
+        >
+          <span *ngIf="taskForm.get('title')?.errors?.['required']">Заголовок обязателен</span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="description" class="label">Description:</label>
+        <textarea id="description" type="text" formControlName="description" class="form-control description-textarea" rows="2"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-delete" (click)="closeModalTaskForm()">Cancel</button>
+        <button type="submit" class="btn btn-add" (click)="addTask(taskForm.getRawValue())" [disabled]="taskForm.invalid">Add Task</button>
+      </div>
+    </form>
+  </div>
+}

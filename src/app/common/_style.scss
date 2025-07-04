@@ -1,0 +1,49 @@
+$background-color: #161633;
+$light-color: #f1f1f1;
+$border-color: #6868de;
+$dark-color: #01011f;
+$button-color: #007bff;
+$delete-task-hover-color: #f44336;
+
+@mixin ui-button {
+  transition: 0.4s;
+  padding: 8px 20px;
+  background: $button-color;
+  color: $light-color;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    transition: 0.4s;
+    background-color: $dark-color;
+    transform: scale(1.05);
+  }
+}
+
+@mixin ui-input {
+  width: 100%;
+  color: $light-color;
+  background-color: $dark-color;
+  padding: 8px;
+  border: none;
+  border-radius: 4px;
+  transition: outline 0.2s ease;
+
+  &:focus {
+    outline: $dark-color 2px solid;
+    border: none;
+    box-shadow: none;
+  }
+}
+
+@mixin scrollbar {
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: $button-color;
+    border-radius: 14px;
+  }
+}

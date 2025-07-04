@@ -1,0 +1,179 @@
+@use "../../common/style" as *;
+
+.container {
+  background-color: $background-color;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
+  align-items: center;
+
+  .task-header {
+    color: $light-color;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 50px;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 50px;
+
+    .search {
+      display: flex;
+      flex-direction: column;
+      width: 60%;
+      max-width: 500px;
+
+      #search-input {
+        @include ui-input;
+        width: 100%;
+        margin-top: 10px;
+      }
+    }
+
+    .add-task-btn {
+      @include ui-button;
+      align-self: end;
+    }
+  }
+
+  .tasks-list {
+    width: 60%;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 50px;
+
+    .task {
+      background-color: $dark-color;
+      padding: 20px;
+      color: $light-color;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-radius: 14px;
+
+      &:hover {
+        transition: 0.3s;
+        transform: translateY(-5px);
+      }
+
+      .title-task-container {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+
+        .task-title {
+          font-weight: bold;
+          font-size: 20px;
+        }
+
+        .btn-delete {
+          background: none;
+          border: none;
+          cursor: pointer;
+          font-size: 24px;
+          color: darken($light-color, 40%);
+
+          &:hover {
+            color: $delete-task-hover-color;
+          }
+        }
+      }
+
+      .description-p {
+        word-break: break-word;
+      }
+
+      .task-footer-buttons {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 10px;
+
+        .link-current-task {
+          align-self: center;
+          color: $light-color;
+          text-decoration: none;
+
+          &:hover {
+            color: $button-color;
+          }
+        }
+
+        .status-select {
+          background-color: $dark-color;
+          color: $light-color;
+          border-radius: 5px;
+          align-self: end;
+          padding: 5px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
+.container-form {
+  background-color: rgba($dark-color, 0.7);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+
+  .task-form {
+    background-color: $background-color;
+    color: $light-color;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    padding: 50px;
+    width: 30%;
+    max-width: 400px;
+    border-radius: 14px;
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 15px;
+
+      .error-message {
+        color: red;
+        margin-left: 5px;
+        font-size: 12px;
+      }
+
+      .form-control {
+        @include ui-input;
+      }
+
+      .description-textarea {
+        @include scrollbar;
+        resize: none;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+
+      .btn {
+        @include ui-button;
+
+        &:disabled {
+          opacity: 0.7;
+          cursor: default;
+
+          &:hover {
+            transform: none;
+            background-color: $button-color;
+          }
+        }
+      }
+    }
+  }
+}
