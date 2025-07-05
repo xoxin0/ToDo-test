@@ -14,8 +14,7 @@
     gap: 20px;
     align-items: start;
     background-color: $dark-color;
-    width: 500px;
-    max-width: 50%;
+    width: 600px;
     padding: 40px 80px;
     border-radius: 14px;
 
@@ -36,6 +35,7 @@
 
     .description-p {
       word-break: break-word;
+      margin-top: 10px;
     }
 
     .detail-title {
@@ -46,6 +46,27 @@
     .back-btn {
       @include ui-button;
       align-self: end;
+    }
+  }
+}
+
+@media (max-width: 590px) {
+  .container {
+    width: 100%;
+
+    .info-task-container {
+      padding: 40px;
+      margin: 0 10px;
+
+      .task-header {
+        .title {
+          font-size: 24px;
+        }
+      }
+
+      .description-p {
+        font-size: 14px;
+      }
     }
   }
 }
