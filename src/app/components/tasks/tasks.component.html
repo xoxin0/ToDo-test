@@ -69,7 +69,9 @@
                  taskForm.get('title')?.touched"
           class="error-message"
         >
-          <span *ngIf="taskForm.get('title')?.errors?.['required']">Заголовок обязателен</span>
+          <span *ngIf="taskForm.get('title')?.errors?.['required']">
+            Заголовок обязателен
+          </span>
         </div>
       </div>
 

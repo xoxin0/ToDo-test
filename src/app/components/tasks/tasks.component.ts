@@ -51,9 +51,22 @@ import { AlertsService } from '../../services/alerts.service';
 
 export class TasksComponent implements OnInit, OnDestroy {
   public taskForm = new FormGroup({
-    title: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required ] }),
-    status: new FormControl<string>(Statuses.NOT_COMPLETED, { nonNullable: true }),
-    description: new FormControl<string>('', { nonNullable: true }),
+    title: new FormControl<string>(
+      '',
+      {
+        nonNullable: true,
+        validators: [ Validators.required ]
+      }),
+
+    status: new FormControl<string>(
+      Statuses.NOT_COMPLETED,
+      { nonNullable: true }
+    ),
+
+    description: new FormControl<string>(
+      '',
+      { nonNullable: true }
+    ),
   })
   public openTaskForm: boolean = false;
   public statuses: Statuses[] = [...Object.values(Statuses)];
