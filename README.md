@@ -32,8 +32,8 @@ ng serve
 5. Открыть в браузере: `http://localhost:4200/`
 
 ## Технологии
-- Angular 19.2.15
-- TypeScript - 5.7.3
+- Angular 20.0.5
+- TypeScript - 5.8.3
 - json-server
 
 ## Контакты
