@@ -1,6 +1,5 @@
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   inject,
   OnDestroy,
@@ -32,6 +31,7 @@ import { ITask } from '../../interfaces/ITask';
 import { Statuses } from '../../common/statuses.enum';
 import { RouterLink } from '@angular/router';
 import { SearchTasksService } from '../../services/search-tasks.service';
+import { AlertsService } from '../../services/alerts.service';
 
 
 @Component({
@@ -52,7 +52,7 @@ import { SearchTasksService } from '../../services/search-tasks.service';
 export class TasksComponent implements OnInit, OnDestroy {
   public taskForm = new FormGroup({
     title: new FormControl<string>('', { nonNullable: true, validators: [ Validators.required ] }),
-    status: new FormControl<string>('Не выполнена', { nonNullable: true }),
+    status: new FormControl<string>(Statuses.NOT_COMPLETED, { nonNullable: true }),
     description: new FormControl<string>('', { nonNullable: true }),
   })
   public openTaskForm: boolean = false;
@@ -62,7 +62,7 @@ export class TasksComponent implements OnInit, OnDestroy {
   protected readonly _searchService: SearchTasksService = inject(SearchTasksService);
 
   private readonly _taskApiService: TaskApiService = inject(TaskApiService);
-  private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
+  private readonly _alert = inject(AlertsService)
   private _destroy$: Subject<void> = new Subject<void>();
   private _tasksSubject$: BehaviorSubject<ITask[]> = new BehaviorSubject<ITask[]>([]);
 
@@ -97,10 +97,10 @@ export class TasksComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           this.loadTasks();
-          this._cdr.markForCheck();
+          this._alert.showSuccessStatusChangeNotification();
         },
         error: () => {
-          console.error('Ошибка при обновлении статуса');
+          this._alert.showErrorStatusChangeNotification();
         }
       });
   }
@@ -110,9 +110,15 @@ export class TasksComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this._destroy$)
       )
-      .subscribe(() => {
-        this.loadTasks();
-        this.taskForm.reset();
+      .subscribe({
+        next: () => {
+          this.loadTasks();
+          this.taskForm.reset();
+          this._alert.showSuccessAddTaskNotification();
+        },
+        error: () => {
+          this._alert.showErrorAddTaskNotification();
+        }
       });
 
     this.closeModalTaskForm();
@@ -123,8 +129,14 @@ export class TasksComponent implements OnInit, OnDestroy {
       .pipe(
         takeUntil(this._destroy$)
       )
-      .subscribe(() => {
-        this.loadTasks();
+      .subscribe({
+        next: () => {
+          this.loadTasks();
+          this._alert.showSuccessDeleteTaskNotification();
+        },
+        error: () => {
+          this._alert.showErrorDeleteTaskNotification();
+        }
       });
   }
 
