@@ -10,7 +10,7 @@
         class="search-input"
         placeholder="Поиск..."
         [(ngModel)]="searchTerm"
-        (input)="updateSearch(searchTerm)"
+        (input)="_searchService.updateSearch(searchTerm)"
       />
     </div>
 
@@ -19,7 +19,7 @@
 
   <div class="tasks-list">
 
-    @for (task of filteredTasks$ | async; track task) {
+    @for (task of _searchService.filteredTasks$ | async; track task) {
       <div class="task">
         <div class="title-task-container">
           <div class="task-title">{{ task.title }}</div>

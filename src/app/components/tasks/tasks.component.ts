@@ -9,19 +9,14 @@ import {
 
 import {
   FormControl,
-  FormGroup, FormsModule,
+  FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
 
 import {
   BehaviorSubject,
-  combineLatest,
-  debounceTime,
-  distinctUntilChanged,
-  map,
-  Observable,
-  startWith,
   Subject,
   takeUntil
 } from 'rxjs';
@@ -36,6 +31,7 @@ import { TaskApiService } from '../../services/task-api.service';
 import { ITask } from '../../interfaces/ITask';
 import { Statuses } from '../../common/statuses.enum';
 import { RouterLink } from '@angular/router';
+import { SearchTasksService } from '../../services/search-tasks.service';
 
 
 @Component({
@@ -62,39 +58,18 @@ export class TasksComponent implements OnInit, OnDestroy {
   public openTaskForm: boolean = false;
   public statuses: Statuses[] = [...Object.values(Statuses)];
   public searchTerm: string = '';
-  public filteredTasks$!: Observable<ITask[]>;
+
+  protected readonly _searchService: SearchTasksService = inject(SearchTasksService);
 
   private readonly _taskApiService: TaskApiService = inject(TaskApiService);
   private readonly _cdr: ChangeDetectorRef = inject(ChangeDetectorRef);
   private _destroy$: Subject<void> = new Subject<void>();
-  private _searchSubject: Subject<string> = new Subject<string>();
-  private _tasksSubject: BehaviorSubject<ITask[]> = new BehaviorSubject<ITask[]>([]);
+  private _tasksSubject$: BehaviorSubject<ITask[]> = new BehaviorSubject<ITask[]>([]);
+
 
   public ngOnInit(): void {
     this.loadTasks();
-
-    // combineLatest - объединяет несколько Observable (не выдаст значение, пока все не выдадут хотя бы одно значение)
-    this.filteredTasks$ = combineLatest([
-      this._tasksSubject.asObservable(),
-      this._searchSubject.pipe(
-        startWith(''),
-        debounceTime(300),
-        distinctUntilChanged(),
-        map(term => term.toLowerCase().trim())
-      )
-    ]).pipe(
-      map(([tasks, searchTerm]) =>
-        tasks.filter(task =>
-          task.title.toLowerCase().includes(searchTerm) ||
-          task.description?.toLowerCase().includes(searchTerm) ||
-          task.status.toLowerCase().includes(searchTerm)
-        )
-      )
-    );
-  }
-
-  public updateSearch(term: string): void {
-    this._searchSubject.next(term);
+    this._searchService.searchTasks(this._tasksSubject$);
   }
 
   public ngOnDestroy(): void {
@@ -159,7 +134,7 @@ export class TasksComponent implements OnInit, OnDestroy {
         takeUntil(this._destroy$)
       )
       .subscribe(tasks => {
-        this._tasksSubject.next(tasks);
+        this._tasksSubject$.next(tasks);
       });
   }
 }
